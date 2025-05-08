@@ -16,7 +16,6 @@ import java.util.ResourceBundle;
 
 public class PatientController implements Initializable {
 
-    // UI Components
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
     @FXML private TextArea addressField;
@@ -35,24 +34,20 @@ public class PatientController implements Initializable {
     @FXML private TableColumn<Patient, String> phoneColumn;
     @FXML private Label statusLabel;
 
-    // Data access
     private final PatientDao patientDao = new PatientDao();
     private final ObservableList<Patient> patientList = FXCollections.observableArrayList();
     private Patient selectedPatient;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Configure table columns
         idColumn.setCellValueFactory(new PropertyValueFactory<>("patientId"));
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
 
-        // Link data to table
         patientTable.setItems(patientList);
 
-        // Set selection behavior
         patientTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             selectedPatient = newSelection;
             if (selectedPatient != null) {
@@ -64,18 +59,13 @@ public class PatientController implements Initializable {
             }
         });
 
-        // Initial state setup
         editButton.setDisable(true);
         deleteButton.setDisable(true);
         updateButton.setDisable(true);
 
-        // Load data
         loadPatientData();
     }
 
-    /**
-     * Loads all patients from the database into the table
-     */
     private void loadPatientData() {
         patientList.clear();
         try {
@@ -86,9 +76,6 @@ public class PatientController implements Initializable {
         }
     }
 
-    /**
-     * Handles Save button action - creates new patient
-     */
     @FXML
     private void savePatient() {
         if (!validateInput()) {
@@ -96,7 +83,6 @@ public class PatientController implements Initializable {
         }
 
         try {
-            // Create a new patient from form data
             Patient newPatient = new Patient(
                     firstNameField.getText(),
                     lastNameField.getText(),
@@ -104,10 +90,8 @@ public class PatientController implements Initializable {
                     phoneField.getText()
             );
 
-            // Save to database
             long id = patientDao.insert(newPatient);
 
-            // Update UI
             loadPatientData();
             clearForm();
             updateStatus("New patient saved with ID: " + id);
@@ -116,9 +100,6 @@ public class PatientController implements Initializable {
         }
     }
 
-    /**
-     * Handles Update button action - updates existing patient
-     */
     @FXML
     private void updatePatient() {
         if (!validateInput() || selectedPatient == null) {
@@ -126,17 +107,14 @@ public class PatientController implements Initializable {
         }
 
         try {
-            // Update patient object with form data
             selectedPatient.setFirstName(firstNameField.getText());
             selectedPatient.setLastName(lastNameField.getText());
             selectedPatient.setAddress(addressField.getText());
             selectedPatient.setPhone(phoneField.getText());
 
-            // Save to database
             boolean success = patientDao.update(selectedPatient);
 
             if (success) {
-                // Refresh the table
                 loadPatientData();
                 clearForm();
                 updateStatus("Patient updated successfully");
@@ -148,9 +126,6 @@ public class PatientController implements Initializable {
         }
     }
 
-    /**
-     * Handles Edit button action - populates form with selected patient
-     */
     @FXML
     private void editPatient() {
         if (selectedPatient != null) {
@@ -159,23 +134,18 @@ public class PatientController implements Initializable {
             addressField.setText(selectedPatient.getAddress());
             phoneField.setText(selectedPatient.getPhone());
 
-            // Switch button states
             saveButton.setDisable(true);
             updateButton.setDisable(false);
             updateStatus("Editing patient ID: " + selectedPatient.getPatientId());
         }
     }
 
-    /**
-     * Handles Delete button action - removes selected patient
-     */
     @FXML
     private void deletePatient() {
         if (selectedPatient == null) {
             return;
         }
 
-        // Confirm deletion
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Patient");
         alert.setHeaderText("Delete Patient Record");
@@ -200,9 +170,6 @@ public class PatientController implements Initializable {
         }
     }
 
-    /**
-     * Clears form fields and resets UI state
-     */
     @FXML
     private void clearForm() {
         firstNameField.clear();
@@ -219,17 +186,11 @@ public class PatientController implements Initializable {
         updateStatus("Form cleared");
     }
 
-    /**
-     * Refreshes the patient table
-     */
     @FXML
     private void refreshTable() {
         loadPatientData();
     }
 
-    /**
-     * Validates user input before saving/updating
-     */
     private boolean validateInput() {
         StringBuilder errorMessage = new StringBuilder();
 
@@ -257,23 +218,16 @@ public class PatientController implements Initializable {
         return true;
     }
 
-    /**
-     * Updates the status label
-     */
     private void updateStatus(String message) {
         statusLabel.setText(message);
     }
 
-    /**
-     * Shows error dialog
-     */
     private void showError(String title, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText("An error occurred");
         alert.setContentText(e.getMessage());
 
-        // Create expandable content with stack trace
         TextArea textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setWrapText(true);

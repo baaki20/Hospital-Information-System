@@ -10,7 +10,6 @@ import java.util.List;
 
 public class PatientDao {
 
-    // 1. INSERT a new Patient
     public long insert(Patient patient) throws SQLException {
         String sql = """
             INSERT INTO patients(first_name, last_name, address, phone)
@@ -38,7 +37,6 @@ public class PatientDao {
         }
     }
 
-    // 2. SELECT all Patients
     public List<Patient> findAll() throws SQLException {
         String sql = "SELECT patient_id, first_name, last_name, address, phone FROM patients";
         List<Patient> list = new ArrayList<>();
@@ -61,7 +59,6 @@ public class PatientDao {
         return list;
     }
 
-    // 3. UPDATE an existing Patient
     public boolean update(Patient patient) throws SQLException {
         String sql = """
             UPDATE patients
@@ -82,7 +79,6 @@ public class PatientDao {
         }
     }
 
-    // 4. DELETE a Patient by ID
     public boolean delete(long patientId) throws SQLException {
         String sql = "DELETE FROM patients WHERE patient_id = ?";
 
@@ -94,7 +90,6 @@ public class PatientDao {
         }
     }
 
-    // Optional: find by ID
     public Patient findById(long patientId) throws SQLException {
         String sql = """
             SELECT patient_id, first_name, last_name, address, phone

@@ -2,7 +2,6 @@
 
 -- DROP DATABASE IF EXISTS "Hospital Information System";
 
--- 1. Core Employees
 CREATE TABLE employees (
     employee_id   BIGSERIAL    PRIMARY KEY,
     first_name    VARCHAR(50)   NOT NULL,
@@ -11,7 +10,6 @@ CREATE TABLE employees (
     phone         VARCHAR(20)
 );
 
--- 2. Doctors (must come after employees)
 CREATE TABLE doctors (
     employee_id   BIGINT        PRIMARY KEY,
     specialty     VARCHAR(100)  NOT NULL,
@@ -19,7 +17,6 @@ CREATE TABLE doctors (
         REFERENCES employees(employee_id)
 );
 
--- 3. Departments (now properly references a doctor as director)
 CREATE TABLE departments (
     department_id   SERIAL      PRIMARY KEY,
     name            VARCHAR(100) NOT NULL,
@@ -29,7 +26,6 @@ CREATE TABLE departments (
         REFERENCES doctors(employee_id)
 );
 
--- 4. Nurses (each tied to one department)
 CREATE TABLE nurses (
     employee_id    BIGINT        PRIMARY KEY,
     rotation       VARCHAR(50)   NOT NULL,
@@ -41,7 +37,6 @@ CREATE TABLE nurses (
         REFERENCES departments(department_id)
 );
 
--- 5. Wards (ward_number unique per department)
 CREATE TABLE wards (
     ward_id         SERIAL       PRIMARY KEY,
     department_id   INT          NOT NULL,
@@ -55,7 +50,6 @@ CREATE TABLE wards (
     UNIQUE (department_id, ward_number)
 );
 
--- 6. Patients
 CREATE TABLE patients (
     patient_id   BIGSERIAL      PRIMARY KEY,
     first_name   VARCHAR(50)    NOT NULL,
@@ -64,7 +58,6 @@ CREATE TABLE patients (
     phone        VARCHAR(20)
 );
 
--- 7. Patient Admissions
 CREATE TABLE patient_admissions (
     admission_id     BIGSERIAL    PRIMARY KEY,
     patient_id       BIGINT       NOT NULL,
@@ -79,7 +72,6 @@ CREATE TABLE patient_admissions (
         REFERENCES wards(ward_id)
 );
 
--- 8. Patient Treatments
 CREATE TABLE patient_treatments (
     treatment_id    BIGSERIAL    PRIMARY KEY,
     admission_id    BIGINT       NOT NULL,
@@ -92,7 +84,6 @@ CREATE TABLE patient_treatments (
         REFERENCES doctors(employee_id)
 );
 
--- 9. Patient Transfers
 CREATE TABLE patient_transfers (
     transfer_id     BIGSERIAL    PRIMARY KEY,
     admission_id    BIGINT       NOT NULL,
@@ -107,7 +98,6 @@ CREATE TABLE patient_transfers (
         REFERENCES wards(ward_id)
 );
 
--- 10. User Accounts
 CREATE TABLE user_accounts (
     user_id        BIGSERIAL    PRIMARY KEY,
     employee_id    BIGINT       UNIQUE,
