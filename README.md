@@ -30,7 +30,7 @@ This project is developed as part of an academic exercise to demonstrate compete
 
 1. Clone the repository.
 2. Configure PostgreSQL and execute the provided SQL script to create the database schema.
-3. Update database connection credentials in `DatabaseConnectionManager.java`.
+3. Update database connection credentials in `DatabaseConnectionManager.java` through a `db-config.properties` file.
 4. Build and run the JavaFX application.
 
 
