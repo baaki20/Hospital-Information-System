@@ -12,5 +12,9 @@ module com.amalitech.hospitalinformationsystem {
     requires java.sql;
 
     opens com.amalitech.hospitalinformationsystem to javafx.fxml;
+    opens com.amalitech.hospitalinformationsystem.controller to javafx.fxml;
+    opens com.amalitech.hospitalinformationsystem.model to javafx.base;
+
     exports com.amalitech.hospitalinformationsystem;
+    exports com.amalitech.hospitalinformationsystem.controller;
 }

@@ -1,7 +1,5 @@
 package com.amalitech.hospitalinformationsystem;
 
-import com.amalitech.hospitalinformationsystem.dao.PatientDao;
-import com.amalitech.hospitalinformationsystem.model.Patient;
 import com.amalitech.hospitalinformationsystem.util.DatabaseConnectionManager;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -13,7 +11,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 public class Main extends Application {
 
@@ -24,15 +21,14 @@ public class Main extends Application {
             System.out.println("✅ Database connection established successfully.");
 
             // 2. Load and show the JavaFX UI
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("hello-view.fxml"));
-            Scene scene = new Scene(loader.load(), 320, 240);
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("patient-view.fxml"));
+            Scene scene = new Scene(loader.load(), 900, 600);
             stage.setTitle("Hospital Information System");
             stage.setScene(scene);
             stage.show();
 
         } catch (SQLException dbEx) {
             // 3a. Handle database failure
-            System.out.println("Heree.....");
             showDatabaseError(dbEx);
         } catch (IOException ioEx) {
             // 3b. Handle FXML loading failure
@@ -50,26 +46,7 @@ public class Main extends Application {
         Platform.exit();
     }
 
-    public static void main(String[] args) throws SQLException {
-
-        PatientDao dao = new PatientDao();
-
-        // INSERT
-        Patient p = new Patient("Jane", "Doe", "123 Maple St", "555‑1234");
-        long id = dao.insert(p);
-        System.out.println("New patient ID: " + id);
-
-        // SELECT ALL
-        List<Patient> all = dao.findAll();
-        all.forEach(pt -> System.out.println(pt.getPatientId() + ": " + pt.getFirstName()));
-
-        // UPDATE
-        p.setAddress("456 Oak Ave");
-        boolean updated = dao.update(p);
-
-        // DELETE
-//        boolean deleted = dao.delete(p.getPatientId());
-
+    public static void main(String[] args) {
         launch(args);
     }
 }

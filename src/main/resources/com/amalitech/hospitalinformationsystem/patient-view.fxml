@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+                <?import javafx.geometry.Insets?>
+                <?import javafx.scene.control.*?>
+                <?import javafx.scene.layout.*?>
+                <?import org.kordamp.bootstrapfx.scene.layout.Panel?>
+                <?import javafx.scene.text.Font?>
+
+                <BorderPane prefHeight="600.0" prefWidth="900.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.amalitech.hospitalinformationsystem.controller.PatientController">
+                    <top>
+                        <VBox styleClass="header-section">
+                            <HBox alignment="CENTER" styleClass="header">
+                                <Label text="Hospital Information System" styleClass="header-title">
+                                    <font>
+                                        <Font name="System Bold" size="24.0"/>
+                                    </font>
+                                </Label>
+                            </HBox>
+                        </VBox>
+                    </top>
+
+                    <center>
+                        <Panel styleClass="main-panel">
+                            <VBox spacing="10.0">
+                                <Label text="Patient Management" styleClass="panel-title"/>
+                                <SplitPane dividerPositions="0.4" prefHeight="400.0" prefWidth="800.0">
+                                    <VBox spacing="10.0" styleClass="form-section">
+                                        <padding>
+                                            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                                        </padding>
+                                        <Label text="Patient Details" styleClass="section-header"/>
+
+                                        <Label text="First Name:"/>
+                                        <TextField fx:id="firstNameField" promptText="Enter first name"/>
+
+                                        <Label text="Last Name:"/>
+                                        <TextField fx:id="lastNameField" promptText="Enter last name"/>
+
+                                        <Label text="Address:"/>
+                                        <TextArea fx:id="addressField" prefHeight="80.0" promptText="Enter address" wrapText="true"/>
+
+                                        <Label text="Phone:"/>
+                                        <TextField fx:id="phoneField" promptText="Enter phone number"/>
+
+                                        <HBox spacing="10.0" alignment="CENTER">
+                                            <Button fx:id="saveButton" onAction="#savePatient" text="Save" styleClass="btn,btn-success"/>
+                                            <Button fx:id="updateButton" onAction="#updatePatient" text="Update" styleClass="btn,btn-primary" disable="true"/>
+                                            <Button fx:id="clearButton" onAction="#clearForm" text="Clear" styleClass="btn,btn-info"/>
+                                        </HBox>
+                                    </VBox>
+
+                                    <VBox>
+                                        <TableView fx:id="patientTable" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="idColumn" text="ID" prefWidth="50.0"/>
+                                                <TableColumn fx:id="firstNameColumn" text="First Name" prefWidth="120.0"/>
+                                                <TableColumn fx:id="lastNameColumn" text="Last Name" prefWidth="120.0"/>
+                                                <TableColumn fx:id="addressColumn" text="Address" prefWidth="200.0"/>
+                                                <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="100.0"/>
+                                            </columns>
+                                        </TableView>
+                                        <HBox spacing="10.0" alignment="CENTER">
+                                            <padding>
+                                                <Insets top="10.0" bottom="10.0" left="10.0" right="10.0"/>
+                                            </padding>
+                                            <Button fx:id="editButton" onAction="#editPatient" text="Edit" styleClass="btn,btn-warning"/>
+                                            <Button fx:id="deleteButton" onAction="#deletePatient" text="Delete" styleClass="btn,btn-danger"/>
+                                            <Button fx:id="refreshButton" onAction="#refreshTable" text="Refresh" styleClass="btn,btn-secondary"/>
+                                        </HBox>
+                                    </VBox>
+                                </SplitPane>
+                            </VBox>
+                        </Panel>
+                    </center>
+
+                    <bottom>
+                        <HBox alignment="CENTER_RIGHT" styleClass="footer">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            </padding>
+                            <Label fx:id="statusLabel" text="Ready" />
+                        </HBox>
+                    </bottom>
+                </BorderPane>
