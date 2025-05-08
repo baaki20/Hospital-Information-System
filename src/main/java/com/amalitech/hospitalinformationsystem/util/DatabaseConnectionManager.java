@@ -1,41 +1,32 @@
 package com.amalitech.hospitalinformationsystem.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+            import java.io.IOException;
+            import java.io.InputStream;
+            import java.sql.Connection;
+            import java.sql.DriverManager;
+            import java.sql.SQLException;
+            import java.util.Properties;
 
-/**
- * Manages JDBC connections to the Hospital database.
- */
-public final class DatabaseConnectionManager {
-    // 1. Configuration (consider moving to a properties file or env vars)
-    private static final String JDBC_URL      = "jdbc:postgresql://localhost:5431/Hospital Information System";
-    private static final String JDBC_USER     = "postgres";
-    private static final String JDBC_PASSWORD = "baaki123";
-    private static final String JDBC_DRIVER   = "org.postgresql.Driver";
+            public final class DatabaseConnectionManager {
+                private static final Properties properties = new Properties();
 
-    // 2. Prevent instantiation
-    private DatabaseConnectionManager() { }
+                static {
+                    try (InputStream input = DatabaseConnectionManager.class.getClassLoader().getResourceAsStream("db-config.properties")) {
+                        if (input == null) {
+                            throw new IOException("Configuration file 'db-config.properties' not found.");
+                        }
+                        properties.load(input);
+                        Class.forName(properties.getProperty("jdbc.driver"));
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new ExceptionInInitializerError("Failed to load database configuration: " + e.getMessage());
+                    }
+                }
 
-    // 3. Register driver once
-    static {
-        try {
-            Class.forName(JDBC_DRIVER);
-        } catch (ClassNotFoundException e) {
-            // Fatal: driver not on classpath
-            throw new ExceptionInInitializerError(
-                    "Unable to load JDBC driver [" + JDBC_DRIVER + "]: " + e.getMessage()
-            );
-        }
-    }
-
-    /**
-     * Obtains a new Connection. Caller is responsible for closing it.
-     *
-     * @return an open {@link Connection}
-     * @throws SQLException if connection cannot be established
-     */
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-    }
-}
+                public static Connection getConnection() throws SQLException {
+                    return DriverManager.getConnection(
+                        properties.getProperty("jdbc.url"),
+                        properties.getProperty("jdbc.user"),
+                        properties.getProperty("jdbc.password")
+                    );
+                }
+            }
