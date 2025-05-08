@@ -22,10 +22,8 @@ public class PatientController implements Initializable {
     @FXML private TextField phoneField;
     @FXML private Button saveButton;
     @FXML private Button updateButton;
-    @FXML private Button clearButton;
     @FXML private Button editButton;
     @FXML private Button deleteButton;
-    @FXML private Button refreshButton;
     @FXML private TableView<Patient> patientTable;
     @FXML private TableColumn<Patient, Long> idColumn;
     @FXML private TableColumn<Patient, String> firstNameColumn;
@@ -72,34 +70,58 @@ public class PatientController implements Initializable {
             patientList.addAll(patientDao.findAll());
             updateStatus("Loaded " + patientList.size() + " patients");
         } catch (SQLException e) {
-            showError("Error loading patients", e);
+            showError("Error loading patients", e.getMessage(), e);
         }
     }
 
-    @FXML
-    private void savePatient() {
+   @FXML
+private void savePatient() {
+    try {
         if (!validateInput()) {
             return;
         }
 
-        try {
-            Patient newPatient = new Patient(
-                    firstNameField.getText(),
-                    lastNameField.getText(),
-                    addressField.getText(),
-                    phoneField.getText()
-            );
+        Patient newPatient = new Patient(
+                firstNameField.getText(),
+                lastNameField.getText(),
+                addressField.getText(),
+                phoneField.getText()
+        );
 
-            long id = patientDao.insert(newPatient);
+        long id = patientDao.insert(newPatient);
 
-            loadPatientData();
-            clearForm();
-            updateStatus("New patient saved with ID: " + id);
-        } catch (SQLException e) {
-            showError("Error saving patient", e);
-        }
+        loadPatientData();
+        clearForm();
+        updateStatus("New patient saved with ID: " + id);
+    } catch (SQLException e) {
+        showError("Database Error", "Failed to save patient. Please try again.", e);
+    } catch (Exception e) {
+        showError("System Error", "An unexpected error occurred. Please contact support.", e);
+    }
+}
+
+private boolean validateInput() {
+    StringBuilder errorMessage = new StringBuilder();
+
+    if (firstNameField.getText().trim().isEmpty()) {
+        errorMessage.append("First name is required.\n");
     }
 
+    if (lastNameField.getText().trim().isEmpty()) {
+        errorMessage.append("Last name is required.\n");
+    }
+
+    if (phoneField.getText().trim().isEmpty()) {
+        errorMessage.append("Phone number is required.\n");
+    }
+
+    if (errorMessage.length() > 0) {
+        showError("Validation Error", "Please correct the following errors:\n" + errorMessage, null);
+        return false;
+    }
+
+    return true;
+}
     @FXML
     private void updatePatient() {
         if (!validateInput() || selectedPatient == null) {
@@ -122,7 +144,7 @@ public class PatientController implements Initializable {
                 updateStatus("Failed to update patient");
             }
         } catch (SQLException e) {
-            showError("Error updating patient", e);
+            showError("Error updating patient", e.getMessage(), e);
         }
     }
 
@@ -165,7 +187,7 @@ public class PatientController implements Initializable {
                     updateStatus("Failed to delete patient");
                 }
             } catch (SQLException e) {
-                showError("Error deleting patient", e);
+                showError("Error deleting patient", e.getMessage(), e);
             }
         }
     }
@@ -191,54 +213,29 @@ public class PatientController implements Initializable {
         loadPatientData();
     }
 
-    private boolean validateInput() {
-        StringBuilder errorMessage = new StringBuilder();
-
-        if (firstNameField.getText().trim().isEmpty()) {
-            errorMessage.append("First name is required.\n");
-        }
-
-        if (lastNameField.getText().trim().isEmpty()) {
-            errorMessage.append("Last name is required.\n");
-        }
-
-        if (phoneField.getText().trim().isEmpty()) {
-            errorMessage.append("Phone number is required.\n");
-        }
-
-        if (errorMessage.length() > 0) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Validation Error");
-            alert.setHeaderText("Please correct the following errors:");
-            alert.setContentText(errorMessage.toString());
-            alert.showAndWait();
-            return false;
-        }
-
-        return true;
-    }
-
     private void updateStatus(String message) {
         statusLabel.setText(message);
     }
 
-    private void showError(String title, Exception e) {
+    private void showError(String title, String message, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
-        alert.setHeaderText("An error occurred");
-        alert.setContentText(e.getMessage());
+        alert.setHeaderText(message);
 
-        TextArea textArea = new TextArea();
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
+        if (e != null) {
+            TextArea textArea = new TextArea();
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
 
-        StringBuilder stackTrace = new StringBuilder();
-        for (StackTraceElement element : e.getStackTrace()) {
-            stackTrace.append(element.toString()).append("\n");
+            StringBuilder stackTrace = new StringBuilder();
+            for (StackTraceElement element : e.getStackTrace()) {
+                stackTrace.append(element.toString()).append("\n");
+            }
+            textArea.setText(stackTrace.toString());
+
+            alert.getDialogPane().setExpandableContent(textArea);
         }
-        textArea.setText(stackTrace.toString());
 
-        alert.getDialogPane().setExpandableContent(textArea);
         alert.showAndWait();
     }
 }

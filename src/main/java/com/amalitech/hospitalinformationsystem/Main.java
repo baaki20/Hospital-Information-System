@@ -25,18 +25,17 @@ public class Main extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (SQLException dbEx) {
-            showDatabaseError(dbEx);
+            showCriticalError("Database Connection Error", "Cannot connect to the database. Please check your configuration.", dbEx);
         } catch (IOException ioEx) {
-            ioEx.printStackTrace();
-            Platform.exit();
+            showCriticalError("System Error", "Failed to load the application. Please contact support.", ioEx);
         }
     }
 
-    private void showDatabaseError(SQLException ex) {
+    private void showCriticalError(String title, String message, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Database Connection Error");
-        alert.setHeaderText("Cannot connect to Hospital database");
-        alert.setContentText("Details: " + ex.getMessage());
+        alert.setTitle(title);
+        alert.setHeaderText(message);
+        alert.setContentText(e.getMessage());
         alert.showAndWait();
         Platform.exit();
     }
